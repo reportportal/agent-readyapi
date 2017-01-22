@@ -20,5 +20,3 @@ hs_err_pid*
 *.iml
 .idea/
 target/
-
-!target/agent-soap-1.0-SNAPSHOT.jar
