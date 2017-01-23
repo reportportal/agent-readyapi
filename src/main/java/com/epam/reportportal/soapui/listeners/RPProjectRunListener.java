@@ -23,7 +23,9 @@ package com.epam.reportportal.soapui.listeners;
 import com.epam.reportportal.message.MessageParser;
 import com.epam.reportportal.service.BatchedReportPortalService;
 import com.epam.reportportal.soapui.service.SoapUIService;
+import com.epam.reportportal.soapui.service.SoapUIServiceImpl;
 import com.epam.ta.reportportal.log4j.appender.ReportPortalAppender;
+import com.eviware.soapui.SoapUI;
 import com.eviware.soapui.model.testsuite.ProjectRunContext;
 import com.eviware.soapui.model.testsuite.ProjectRunListener;
 import com.eviware.soapui.model.testsuite.ProjectRunner;
@@ -53,10 +55,16 @@ public class RPProjectRunListener implements ProjectRunListener {
 
     @Override
     public void beforeRun(ProjectRunner runner, ProjectRunContext context) {
-        service = new SoapUIService(context.getProject());
-        defineLogger(service);
+        try {
+            service = new SoapUIServiceImpl(context.getProject());
+            defineLogger(service);
+        } catch (Throwable t) {
+            SoapUI.log("ReportPortal plugin cannot be initialized. " + t.getMessage());
+            service = SoapUIService.NOP_SERVICE;
+        }
         service.startLaunch();
         context.setProperty(RP_SERVICE, service);
+
     }
 
     @Override

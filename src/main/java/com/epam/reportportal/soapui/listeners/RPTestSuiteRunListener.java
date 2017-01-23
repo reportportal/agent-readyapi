@@ -21,6 +21,8 @@
 package com.epam.reportportal.soapui.listeners;
 
 import com.epam.reportportal.soapui.service.SoapUIService;
+import com.epam.reportportal.soapui.service.SoapUIServiceImpl;
+import com.eviware.soapui.SoapUI;
 import com.eviware.soapui.model.testsuite.TestCase;
 import com.eviware.soapui.model.testsuite.TestCaseRunner;
 import com.eviware.soapui.model.testsuite.TestSuiteRunContext;
@@ -56,10 +58,14 @@ public class RPTestSuiteRunListener implements TestSuiteRunListener {
     public void beforeRun(TestSuiteRunner runner, TestSuiteRunContext context) {
         service = (SoapUIService) context.getProperty(RP_SERVICE);
         if (null == service) {
-            service = new SoapUIService(context.getTestSuite().getProject());
-            service.startLaunch();
-            service.startTestSuite(context.getTestSuite());
-
+            try {
+                service = new SoapUIServiceImpl(context.getTestSuite().getProject());
+                service.startLaunch();
+                service.startTestSuite(context.getTestSuite());
+            } catch (Throwable t) {
+                SoapUI.log("ReportPortal plugin cannot be initialized. " + t.getMessage());
+                service = SoapUIService.NOP_SERVICE;
+            }
             context.setProperty(SUITE_ONLY, true);
             context.setProperty(RP_SERVICE, service);
         }
