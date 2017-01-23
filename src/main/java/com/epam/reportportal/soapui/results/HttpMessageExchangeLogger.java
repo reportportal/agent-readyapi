@@ -6,7 +6,6 @@ import com.eviware.soapui.impl.wsdl.submit.transports.http.HttpResponse;
 import com.google.common.base.Strings;
 
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -19,20 +18,17 @@ public class HttpMessageExchangeLogger extends ResultLogger<HttpMessageExchange>
     }
 
     @Override
-    public List<SaveLogRQ> buildLogs(String testId, HttpMessageExchange result) {
+    protected List<SaveLogRQ> prepareLogs(String testId, HttpMessageExchange result) {
         final HttpResponse testRS = (HttpResponse) result.getResponse();
         return Arrays.asList(
-                logEntity(testId, testRS.getRequestHeaders().toString(), testRS.getRequestContent()),
-                logEntity(testId, testRS.getResponseHeaders().toString(), testRS.getContentAsString()));
+                prepareEntity(testId, "REQUEST", testRS.getRequestHeaders().toString(), testRS.getRequestContent()),
+                prepareEntity(testId, "RESPONSE", testRS.getResponseHeaders().toString(), testRS.getContentAsString()));
     }
 
-    private SaveLogRQ logEntity(String testId, String headers, String body) {
-        SaveLogRQ rqRQ = new SaveLogRQ();
-        rqRQ.setLevel("INFO");
-        rqRQ.setTestItemId(testId);
-        rqRQ.setLogTime(Calendar.getInstance().getTime());
+    private SaveLogRQ prepareEntity(String testId, String prefix, String headers, String body) {
         StringBuilder rqLog = new StringBuilder();
         rqLog
+                .append(prefix).append("\n")
                 .append("HEADERS:\n")
                 .append(headers);
 
@@ -40,9 +36,7 @@ public class HttpMessageExchangeLogger extends ResultLogger<HttpMessageExchange>
             rqLog.append("BODY:\n")
                     .append(body);
         }
-
-        rqRQ.setMessage(rqLog.toString());
-        return rqRQ;
+        return prepareEntity(testId, "INFO", rqLog.toString());
 
     }
 

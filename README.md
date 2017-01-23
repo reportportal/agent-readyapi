@@ -17,5 +17,6 @@ rp.project={YOUR_PROJECT}
 rp.launch={NAME_OF_YOUR_LAUNCH}
 ```
 - Reload your project
+- RUN your project and enjoy result in ReportPortal
   
   

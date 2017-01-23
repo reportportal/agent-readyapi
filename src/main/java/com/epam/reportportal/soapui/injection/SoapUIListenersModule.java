@@ -27,6 +27,7 @@ import com.epam.reportportal.listeners.ListenerParameters;
 import com.epam.reportportal.restclient.endpoint.RestEndpoint;
 import com.epam.reportportal.service.BatchedReportPortalService;
 import com.epam.reportportal.service.IReportPortalService;
+import com.epam.reportportal.soapui.results.GroovyScriptLogger;
 import com.epam.reportportal.soapui.results.HttpMessageExchangeLogger;
 import com.epam.reportportal.soapui.results.ResultLogger;
 import com.epam.reportportal.soapui.service.SoapUIContext;
@@ -43,7 +44,7 @@ import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,7 +117,7 @@ class SoapUIListenersModule extends AbstractModule {
     @Named("resultLoggers")
     @Singleton
     public List<ResultLogger<?>> provideResultLoggers() {
-        return Collections.<ResultLogger<?>>singletonList(new HttpMessageExchangeLogger());
+        return Arrays.<ResultLogger<?>>asList(new HttpMessageExchangeLogger(), new GroovyScriptLogger());
     }
 
     private Properties convertProperties(TestPropertyHolder params) {
