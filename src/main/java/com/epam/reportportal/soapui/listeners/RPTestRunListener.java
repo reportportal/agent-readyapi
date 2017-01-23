@@ -45,7 +45,9 @@ public class RPTestRunListener implements TestRunListener {
     public void beforeRun(TestCaseRunner runner,
             TestCaseRunContext context) {
         service = (SoapUIService) context.getProperty(RP_SERVICE);
-        service = SoapUIService.NOP_SERVICE;
+        if (null == service) {
+            service = SoapUIService.NOP_SERVICE;
+        }
     }
 
     @Override
