@@ -21,8 +21,6 @@
 package com.epam.reportportal.soapui.listeners;
 
 import com.epam.reportportal.soapui.service.SoapUIService;
-import com.epam.reportportal.soapui.service.SoapUIServiceImpl;
-import com.eviware.soapui.SoapUI;
 import com.eviware.soapui.model.testsuite.TestCaseRunContext;
 import com.eviware.soapui.model.testsuite.TestCaseRunner;
 import com.eviware.soapui.model.testsuite.TestRunListener;
@@ -42,40 +40,17 @@ import static com.epam.reportportal.soapui.listeners.RPProjectRunListener.RP_SER
 @ListenerConfiguration
 public class RPTestRunListener implements TestRunListener {
 
-    private static final String TEST_ONLY = "test_only";
     private SoapUIService service;
 
     public void beforeRun(TestCaseRunner runner,
             TestCaseRunContext context) {
         service = (SoapUIService) context.getProperty(RP_SERVICE);
-        if (null == service) {
-            try {
-                service = new SoapUIServiceImpl(context.getTestCase().getTestSuite().getProject());
-                service.startLaunch();
-
-                service.startTestCase(context.getTestCase());
-            } catch (Throwable t) {
-                SoapUI.log("ReportPortal plugin cannot be initialized. " + t.getMessage());
-                service = SoapUIService.NOP_SERVICE;
-            }
-            context.setProperty(TEST_ONLY, true);
-            context.setProperty(RP_SERVICE, service);
-        }
+        service = SoapUIService.NOP_SERVICE;
     }
 
     @Override
     public void afterRun(TestCaseRunner runner,
             TestCaseRunContext context) {
-        final Object testOnly = context.getProperty(TEST_ONLY);
-        if (null != testOnly && ((Boolean) testOnly)) {
-            final int stepsCount = context.getTestCase().getTestStepList().size();
-            //all steps are passed
-            if (runner.getResultCount() == stepsCount) {
-                service.finishTestCase(runner);
-                service.finishLaunch();
-            }
-
-        }
     }
 
     @Override
