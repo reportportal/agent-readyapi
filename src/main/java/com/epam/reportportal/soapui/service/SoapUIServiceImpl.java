@@ -38,6 +38,7 @@ import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
 import com.epam.ta.reportportal.ws.model.launch.StartLaunchRQ;
 import com.epam.ta.reportportal.ws.model.log.SaveLogRQ;
+import com.eviware.soapui.SoapUI;
 import com.eviware.soapui.model.TestPropertyHolder;
 import com.eviware.soapui.model.testsuite.TestCase;
 import com.eviware.soapui.model.testsuite.TestCaseRunner;
@@ -47,6 +48,7 @@ import com.eviware.soapui.model.testsuite.TestStepResult;
 import com.eviware.soapui.model.testsuite.TestStepResult.TestStepStatus;
 import com.eviware.soapui.model.testsuite.TestSuite;
 import com.eviware.soapui.model.testsuite.TestSuiteRunner;
+import com.google.api.client.repackaged.com.google.common.base.Throwables;
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
@@ -181,6 +183,8 @@ public class SoapUIServiceImpl implements SoapUIService {
             final String parentId = testCase.getTestSuite().getPropertyValue(ID);
             rs = serviceClient.startTestItem(Strings.isNullOrEmpty(parentId) ? null : parentId, rq);
         } catch (Exception e) {
+            SoapUI.log("Error during starting test case:\n" + e.getMessage() + "\n" + Throwables
+                    .getStackTraceAsString(e));
             ListenersUtils.handleException(e, logger, "Unable start test: '" + testCase.getName() + "'");
         }
         if (rs != null) {
@@ -196,6 +200,8 @@ public class SoapUIServiceImpl implements SoapUIService {
         try {
             serviceClient.finishTestItem(testCaseContext.getTestCase().getPropertyValue(ID), rq);
         } catch (Exception e) {
+            SoapUI.log("Error during finishing test case:\n" + e.getMessage() + "\n" + Throwables
+                    .getStackTraceAsString(e));
             ListenersUtils.handleException(e, logger,
                     "Unable finish test: '" + testCaseContext.getTestCase().getPropertyValue(ID) + "'");
         }
@@ -218,6 +224,7 @@ public class SoapUIServiceImpl implements SoapUIService {
         try {
             rs = serviceClient.startTestItem(testStep.getTestCase().getPropertyValue(ID), rq);
         } catch (Exception e) {
+            SoapUI.log("Error during starting step:\n" + e.getMessage());
             ListenersUtils.handleException(e, logger, "Unable start test method: '" + testStep.getName() + "'");
         }
         if (rs != null) {
@@ -258,6 +265,8 @@ public class SoapUIServiceImpl implements SoapUIService {
 
             serviceClient.finishTestItem(testId, rq);
         } catch (Exception e) {
+            SoapUI.log("Error during finishing step:\n" + e.getMessage() + "\n" + Throwables
+                    .getStackTraceAsString(e));
             ListenersUtils.handleException(e, logger, "Unable finish test method: '" + testId + "'");
         } finally {
             ReportPortalListenerContext.setRunningNowItemId(null);
@@ -287,6 +296,8 @@ public class SoapUIServiceImpl implements SoapUIService {
         try {
             serviceClient.log(slrq);
         } catch (Exception e1) {
+            SoapUI.log("Unable to send log to ReportPortal:\n" + e1.getMessage() + "\n" + Throwables
+                    .getStackTraceAsString(e1));
             ListenersUtils.handleException(e1, logger, "Unable to send message to Report Portal");
         }
     }
