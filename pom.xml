@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>SoapUI Listener Plugin</name>
-    <artifactId>agent-soap</artifactId>
+    <artifactId>agent-readyapi</artifactId>
     <groupId>com.epam.reportportal</groupId>
 
     <repositories>
