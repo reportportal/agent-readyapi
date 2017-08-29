@@ -20,6 +20,7 @@
  */
 package com.epam.reportportal.soapui.injection;
 
+import com.epam.reportportal.guice.ConfigurationModule;
 import com.epam.reportportal.guice.Injector;
 import com.epam.reportportal.guice.ReportPortalClientModule;
 import com.eviware.soapui.model.TestPropertyHolder;
@@ -43,9 +44,8 @@ public final class SoapUIInjector {
     }
 
     public static Injector newOne(TestPropertyHolder contextProperties) {
-        final SoapUIListenersModule soapUIModule = new SoapUIListenersModule(contextProperties);
-        return Injector.wrap(Guice.createInjector(
-                Modules.override(new ReportPortalClientModule()).with(soapUIModule)));
+        return Injector.create(new SoapUIListenersModule(contextProperties), new ReportPortalClientModule());
+
     }
 
 }
