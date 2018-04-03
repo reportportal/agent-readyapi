@@ -1,3 +1,4 @@
+# DEPRECATED in favor of [soapui agent](https://github.com/reportportal/agent-java-soapui)
 # Ready! API Integration
 
 ## Installation
